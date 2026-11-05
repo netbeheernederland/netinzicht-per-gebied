@@ -7,15 +7,239 @@ license: https://www.apache.org/licenses/LICENSE-2.0.txt
 imports:
 - linkml:types
 prefixes:
-  linkml: https://w3id.org/linkml/
+  cbs: https://www.cbs.nl/nl-nl/onze-diensten/methoden/begrippen/
   cim: https://cim.ucaiug.io/ns#
+  dcat: http://www.w3.org/ns/dcat#
   dcterms: http://purl.org/dc/terms/
-  nbnl-term: https://begrippen.netbeheernederland.nl/id/
+  eu: https://cim.ucaiug.io/ns/eu#
+  linkml: https://w3id.org/linkml/
+  nl: https://cim.ucaiug.io/ns/nl#
   unit: http://qudt.org/vocab/unit/
 annotations:
   model_uri: https://modellen.netbeheernederland.nl/netinzicht-per-gebied
   exchange_format: application/json
   model_type: data-product
-types: {}
-enums: {}
-classes: {}
+classes:
+  Dataset:
+    description: Root dataset for this JSON.
+    attributes:
+      Substations:
+        description: A collection of equipment for purposes other than
+          generation or utilization, through which electric energy in bulk is
+          passed for the purposes of switching or modifying its
+          characteristics.
+        slot_uri: nl:Dataset.PowerTransformers
+        range: PowerTransformer
+        required: true
+        multivalued: true
+      PowerTransformers:
+        description: Controls voltage and phase shift.
+        slot_uri: nl:Dataset.PowerTransformers
+        range: PowerTransformer
+        required: true
+        multivalued: true
+      Locations:
+        description: The place, scene, or point of something where someone or
+          something has been, is, and/or will be at a given moment in time.
+        slot_uri: nl:Dataset.Locations
+        range: Location
+        required: true
+        multivalued: true
+    class_uri: dcat:Dataset
+    tree_root: true
+  PowerTransformer:
+    description: "An electrical device consisting of two or more coupled windings,\
+      \ with or without a magnetic core, for introducing mutual coupling between electric\
+      \ circuits. Transformers can be used to control voltage and phase shift (active\
+      \ power flow).\r\nA power transformer may be composed of separate transformer\
+      \ tanks that need not be identical.\r\nA power transformer can be modelled with\
+      \ or without tanks and is intended for use in both balanced and unbalanced representations.\
+      \   A power transformer typically has two terminals, but may have one (grounding),\
+      \ three or more terminals.\r\nThe inherited association ConductingEquipment.BaseVoltage\
+      \ should not be used.  The association from TransformerEnd to BaseVoltage should\
+      \ be used instead."
+    from_schema: https://cim.ucaiug.io/ns#TC57CIM.IEC61970.Base.Wires
+    is_a: ConductingEquipment
+    class_uri: cim:PowerTransformer
+  ConductingEquipment:
+    description: The parts of the AC power system that are designed to carry current
+      or that are conductively connected through terminals.
+    from_schema: https://cim.ucaiug.io/ns#TC57CIM.IEC61970.Base.Core
+    is_a: Equipment
+    abstract: true
+    class_uri: cim:ConductingEquipment
+  Equipment:
+    description: The parts of a power system that are physical devices, electronic
+      or mechanical.
+    from_schema: https://cim.ucaiug.io/ns#TC57CIM.IEC61970.Base.Core
+    is_a: PowerSystemResource
+    abstract: true
+    attributes:
+      EquipmentContainer:
+        description: Container of this equipment.
+        slot_uri: cim:Equipment.EquipmentContainer
+        required: false
+        multivalued: false
+        any_of:
+        - range: Substation
+        - range: Line
+        - range: VoltageLevel
+        - range: Bay
+      aggregate:
+        description: "The aggregate flag provides an alternative way of representing\
+          \ an aggregated (equivalent) element. It is applicable in cases when the\
+          \ dedicated classes for equivalent equipment do not have all of the attributes\
+          \ necessary to represent the required level of detail.  In case the flag\
+          \ is set to \u201Ctrue\u201D the single instance of equipment represents\
+          \ multiple pieces of equipment that have been modelled together as an aggregate\
+          \ equivalent obtained by a network reduction procedure. Examples would be\
+          \ power transformers or synchronous machines operating in parallel modelled\
+          \ as a single aggregate power transformer or aggregate synchronous machine.\
+          \  \r\nThe attribute is not used for EquivalentBranch, EquivalentShunt and\
+          \ EquivalentInjection."
+        slot_uri: cim:Equipment.aggregate
+        range: boolean
+        required: false
+        multivalued: false
+    class_uri: cim:Equipment
+  PowerSystemResource:
+    description: A power system resource (PSR) can be an item of equipment such as
+      a switch, an equipment container containing many individual items of equipment
+      such as a substation, or an organisational entity such as sub-control area.
+      Power system resources can have measurements associated.
+    from_schema: https://cim.ucaiug.io/ns#TC57CIM.IEC61970.Base.Core
+    is_a: IdentifiedObject
+    abstract: true
+    class_uri: cim:PowerSystemResource
+  IdentifiedObject:
+    description: This is a root class to provide common identification for all classes
+      needing identification and naming attributes.
+    from_schema: https://cim.ucaiug.io/ns#TC57CIM.IEC61970.Base.Core
+    abstract: true
+    attributes:
+      description:
+        description: The description is a free human readable text describing or naming
+          the object. It may be non unique and may not correlate to a naming hierarchy.
+        slot_uri: cim:IdentifiedObject.description
+        range: string
+        required: false
+        multivalued: false
+      mRID:
+        description: "Master resource identifier issued by a model authority. The\
+          \ mRID is unique within an exchange context. Global uniqueness is easily\
+          \ achieved by using a UUID, as specified in RFC 4122, for the mRID. The\
+          \ use of UUID is strongly recommended.\r\nFor CIMXML data files in RDF syntax\
+          \ conforming to IEC 61970-552, the mRID is mapped to rdf:ID or rdf:about\
+          \ attributes that identify CIM object elements."
+        slot_uri: cim:IdentifiedObject.mRID
+        identifier: true
+        range: string
+        required: true
+        multivalued: false
+      europeanArticleNumberEAN:
+        description: The attribute is used for an exchange of the EAN code (European
+          Article Number). The length of the string is 18 characters as defined by
+          the EAN code.
+        slot_uri: nl:IdentifiedObject.europeanArticleNumberEAN
+        range: string
+        required: false
+        multivalued: false
+      name:
+        description: "The name is any free human readable and possibly non unique\
+          \ text naming the object.\r\n"
+        slot_uri: cim:IdentifiedObject.name
+        range: string
+        required: false
+        multivalued: false
+    class_uri: cim:IdentifiedObject
+  Substation:
+    description: "A collection of equipment for purposes other than generation or\
+      \ utilization, through which electric energy in bulk is passed for the purposes\
+      \ of switching or modifying its characteristics. \r\n"
+    from_schema: https://cim.ucaiug.io/ns#TC57CIM.IEC61970.Base.Core
+    is_a: EquipmentContainer
+    class_uri: cim:Substation
+  EquipmentContainer:
+    description: 'A modelling construct to provide a root class for containing equipment. '
+    from_schema: https://cim.ucaiug.io/ns#TC57CIM.IEC61970.Base.Core
+    is_a: ConnectivityNodeContainer
+    abstract: true
+    class_uri: cim:EquipmentContainer
+  ConnectivityNodeContainer:
+    description: "A base class for all objects that may contain connectivity nodes\
+      \ or topological nodes.\r\n"
+    from_schema: https://cim.ucaiug.io/ns#TC57CIM.IEC61970.Base.Core
+    is_a: PowerSystemResource
+    abstract: true
+    class_uri: cim:ConnectivityNodeContainer
+  EnergyConsumer:
+    description: Generic user of energy - a  point of consumption on the power system
+      model.
+    from_schema: https://cim.ucaiug.io/ns#TC57CIM.IEC61970.Base.Wires
+    is_a: EnergyConnection
+    class_uri: cim:EnergyConsumer
+  EnergyConnection:
+    description: A connection of energy generation or consumption on the power system
+      model.
+    from_schema: https://cim.ucaiug.io/ns#TC57CIM.IEC61970.Base.Wires
+    is_a: ConductingEquipment
+    abstract: true
+    class_uri: cim:EnergyConnection
+  UsagePoint:
+    description: Logical or physical point in the network to which readings or events
+      may be attributed. Used at the place where a physical or virtual meter may be
+      located; however, it is not required that a meter be present.
+    from_schema: https://cim.ucaiug.io/ns#TC57CIM.IEC61968.Metering
+    is_a: IdentifiedObject
+    attributes:
+      isVirtual:
+        description: If true, this usage point is virtual, i.e., no physical location
+          exists in the network where a meter could be located to collect the meter
+          readings. For example, one may define a virtual usage point to serve as
+          an aggregation of usage for all of a company's premises distributed widely
+          across the distribution territory. Otherwise, the usage point is physical,
+          i.e., there is a logical point in the network where a meter could be located
+          to collect meter readings.
+        slot_uri: cim:UsagePoint.isVirtual
+        range: boolean
+        required: false
+        multivalued: false
+      Equipments:
+        description: All equipment connecting this usage point to the electrical grid.
+        slot_uri: cim:UsagePoint.Equipments
+        range: EnergyConsumer
+        required: false
+        multivalued: true
+    class_uri: cim:UsagePoint
+  Location:
+    description: "The place, scene, or point of something where someone or something\
+      \ has been, is, and/or will be at a given moment in time. It can be defined\
+      \ with one or more position points (coordinates) in a given coordinate system.\r\
+      \n"
+    from_schema: https://cim.ucaiug.io/ns#TC57CIM.IEC61968.Common
+    is_a: IdentifiedObject
+    attributes:
+      mainAddress:
+        description: Main address of the location.
+        slot_uri: cim:Location.mainAddress
+        range: StreetAddress
+        required: false
+        multivalued: false
+      PowerSystemResources:
+        description: All power system resources at this location.
+        slot_uri: cim:Location.PowerSystemResources
+        range: curie
+        required: true
+        multivalued: true
+    class_uri: cim:Location
+  StreetAddress:
+    description: General purpose street and postal address information.
+    from_schema: https://cim.ucaiug.io/ns#TC57CIM.IEC61968.Common
+    attributes:
+      postalCode:
+        description: Postal code for the address.
+        slot_uri: cim:StreetAddress.postalCode
+        range: string
+        required: true
+        multivalued: false
+    class_uri: cim:StreetAddress
