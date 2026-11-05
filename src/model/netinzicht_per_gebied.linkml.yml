@@ -1,0 +1,21 @@
+id: https://modellen.netbeheernederland.nl/netinzicht-per-gebied
+name: netinzicht-per-gebied
+description: |-
+    Information model for the "Netinzicht per gebied" data product.
+title: Netinzicht per gebied
+license: https://www.apache.org/licenses/LICENSE-2.0.txt
+imports:
+- linkml:types
+prefixes:
+  linkml: https://w3id.org/linkml/
+  cim: https://cim.ucaiug.io/ns#
+  dcterms: http://purl.org/dc/terms/
+  nbnl-term: https://begrippen.netbeheernederland.nl/id/
+  unit: http://qudt.org/vocab/unit/
+annotations:
+  model_uri: https://modellen.netbeheernederland.nl/netinzicht-per-gebied
+  exchange_format: application/json
+  model_type: data-product
+types: {}
+enums: {}
+classes: {}

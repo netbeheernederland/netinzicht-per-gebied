@@ -1,0 +1,3 @@
+= Netinzicht per gebied
+
+Information model for the "Netinzicht per gebied" data product.
