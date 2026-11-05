@@ -19,6 +19,101 @@ annotations:
   model_uri: https://modellen.netbeheernederland.nl/netinzicht-per-gebied
   exchange_format: application/json
   model_type: data-product
+enums:
+  UnitMultiplier:
+    description: "The unit multipliers defined for the CIM.  When applied to unit\
+      \ symbols, the unit symbol is treated as a derived unit. Regardless of the contents\
+      \ of the unit symbol text, the unit symbol shall be treated as if it were a\
+      \ single-character unit symbol. Unit symbols should not contain multipliers,\
+      \ and it should be left to the multiplier to define the multiple for an entire\
+      \ data type. \r\n\r\nFor example, if a unit symbol is \"m2Pers\" and the multiplier\
+      \ is \"k\", then the value is k(m**2/s), and the multiplier applies to the entire\
+      \ final value, not to any individual part of the value. This can be conceptualized\
+      \ by substituting a derived unit symbol for the unit type. If one imagines that\
+      \ the symbol \"\xDE\" represents the derived unit \"m2Pers\", then applying\
+      \ the multiplier \"k\" can be conceptualized simply as \"k\xDE\".\r\n\r\nFor\
+      \ example, the SI unit for mass is \"kg\" and not \"g\".  If the unit symbol\
+      \ is defined as \"kg\", then the multiplier is applied to \"kg\" as a whole\
+      \ and does not replace the \"k\" in front of the \"g\". In this case, the multiplier\
+      \ of \"m\" would be used with the unit symbol of \"kg\" to represent one gram.\
+      \  As a text string, this violates the instructions in IEC 80000-1. However,\
+      \ because the unit symbol in CIM is treated as a derived unit instead of as\
+      \ an SI unit, it makes more sense to conceptualize the \"kg\" as if it were\
+      \ replaced by one of the proposed replacements for the SI mass symbol. If one\
+      \ imagines that the \"kg\" were replaced by a symbol \"\xDE\", then it is easier\
+      \ to conceptualize the multiplier \"m\" as creating the proper unit \"m\xDE\"\
+      , and not the forbidden unit \"mkg\"."
+    from_schema: http://data.netbeheernederland.nl/data-product/im-nbnl-equipment
+    enum_uri: cim:UnitMultiplier
+    permissible_values:
+      G:
+        meaning: cim:UnitMultiplier.G
+      h:
+        meaning: cim:UnitMultiplier.h
+      k:
+        meaning: cim:UnitMultiplier.k
+      m:
+        meaning: cim:UnitMultiplier.m
+      M:
+        meaning: cim:UnitMultiplier.M
+      micro:
+        meaning: cim:UnitMultiplier.micro
+      none:
+        meaning: cim:UnitMultiplier.none
+  UnitSymbol:
+    description: "The derived units defined for usage in the CIM. In some cases, the\
+      \ derived unit is equal to an SI unit. Whenever possible, the standard derived\
+      \ symbol is used instead of the formula for the derived unit. For example, the\
+      \ unit symbol Farad is defined as \"F\" instead of \"CPerV\". In cases where\
+      \ a standard symbol does not exist for a derived unit, the formula for the unit\
+      \ is used as the unit symbol. For example, density does not have a standard\
+      \ symbol and so it is represented as \"kgPerm3\". With the exception of the\
+      \ \"kg\", which is an SI unit, the unit symbols do not contain multipliers and\
+      \ therefore represent the base derived unit to which a multiplier can be applied\
+      \ as a whole. \r\nEvery unit symbol is treated as an unparseable text as if\
+      \ it were a single-letter symbol. The meaning of each unit symbol is defined\
+      \ by the accompanying descriptive text and not by the text contents of the unit\
+      \ symbol.\r\nTo allow the widest possible range of serializations without requiring\
+      \ special character handling, several substitutions are made which deviate from\
+      \ the format described in IEC 80000-1. The division symbol \"/\" is replaced\
+      \ by the letters \"Per\". Exponents are written in plain text after the unit\
+      \ as \"m3\" instead of being formatted as \"m\" with a superscript of 3  or\
+      \ introducing a symbol as in \"m^3\". The degree symbol \"\xB0\" is replaced\
+      \ with the letters \"deg\". Any clarification of the meaning for a substitution\
+      \ is included in the description for the unit symbol.\r\nNon-SI units are included\
+      \ in list of unit symbols to allow sources of data to be correctly labelled\
+      \ with their non-SI units (for example, a GPS sensor that is reporting numbers\
+      \ that represent feet instead of meters). This allows software to use the unit\
+      \ symbol information correctly convert and scale the raw data of those sources\
+      \ into SI-based units. \r\nThe integer values are used for harmonization with\
+      \ IEC 61850."
+    from_schema: http://data.netbeheernederland.nl/data-product/im-nbnl-equipment
+    enum_uri: cim:UnitSymbol
+    permissible_values:
+      A:
+        meaning: cim:UnitSymbol.A
+      Ah:
+        meaning: cim:UnitSymbol.Ah
+      none:
+        meaning: cim:UnitSymbol.none
+      ohm:
+        meaning: cim:UnitSymbol.ohm
+      V:
+        meaning: cim:UnitSymbol.V
+      VA:
+        meaning: cim:UnitSymbol.VA
+      VAh:
+        meaning: cim:UnitSymbol.VAh
+      VAr:
+        meaning: cim:UnitSymbol.VAr
+      VArh:
+        meaning: cim:UnitSymbol.VArh
+      W:
+        meaning: cim:UnitSymbol.W
+      Wb:
+        meaning: cim:UnitSymbol.Wb
+      Wh:
+        meaning: cim:UnitSymbol.Wh
 classes:
   Dataset:
     description: Root dataset for this JSON.
@@ -29,7 +124,7 @@ classes:
           passed for the purposes of switching or modifying its
           characteristics.
         slot_uri: nl:Dataset.PowerTransformers
-        range: PowerTransformer
+        range: Substation
         required: true
         multivalued: true
       PowerTransformers:
@@ -38,13 +133,14 @@ classes:
         range: PowerTransformer
         required: true
         multivalued: true
-      Locations:
-        description: The place, scene, or point of something where someone or
-          something has been, is, and/or will be at a given moment in time.
-        slot_uri: nl:Dataset.Locations
-        range: Location
+      EnergyConsumers:
+        description: Generic user of energy - a  point of consumption on the
+          power system model.
+        slot_uri: nl:Dataset.EnergyConsumers
+        range: EnergyConsumer
         required: true
         multivalued: true
+    is_a: IdentifiedObject
     class_uri: dcat:Dataset
     tree_root: true
   PowerTransformer:
@@ -59,6 +155,22 @@ classes:
       \ should not be used.  The association from TransformerEnd to BaseVoltage should\
       \ be used instead."
     from_schema: https://cim.ucaiug.io/ns#TC57CIM.IEC61970.Base.Wires
+    attributes:
+      multiplier:
+        slot_uri: cim:ActivePower.multiplier
+        range: UnitMultiplier
+        required: true
+        multivalued: false
+      unit:
+        slot_uri: cim:ActivePower.unit
+        range: UnitSymbol
+        required: true
+        multivalued: false
+      value:
+        slot_uri: cim:ActivePower.value
+        range: float
+        required: true
+        multivalued: false
     is_a: ConductingEquipment
     class_uri: cim:PowerTransformer
   ConductingEquipment:
@@ -78,27 +190,7 @@ classes:
       EquipmentContainer:
         description: Container of this equipment.
         slot_uri: cim:Equipment.EquipmentContainer
-        required: false
-        multivalued: false
-        any_of:
-        - range: Substation
-        - range: Line
-        - range: VoltageLevel
-        - range: Bay
-      aggregate:
-        description: "The aggregate flag provides an alternative way of representing\
-          \ an aggregated (equivalent) element. It is applicable in cases when the\
-          \ dedicated classes for equivalent equipment do not have all of the attributes\
-          \ necessary to represent the required level of detail.  In case the flag\
-          \ is set to \u201Ctrue\u201D the single instance of equipment represents\
-          \ multiple pieces of equipment that have been modelled together as an aggregate\
-          \ equivalent obtained by a network reduction procedure. Examples would be\
-          \ power transformers or synchronous machines operating in parallel modelled\
-          \ as a single aggregate power transformer or aggregate synchronous machine.\
-          \  \r\nThe attribute is not used for EquivalentBranch, EquivalentShunt and\
-          \ EquivalentInjection."
-        slot_uri: cim:Equipment.aggregate
-        range: boolean
+        range: Substation
         required: false
         multivalued: false
     class_uri: cim:Equipment
@@ -136,14 +228,6 @@ classes:
         range: string
         required: true
         multivalued: false
-      europeanArticleNumberEAN:
-        description: The attribute is used for an exchange of the EAN code (European
-          Article Number). The length of the string is 18 characters as defined by
-          the EAN code.
-        slot_uri: nl:IdentifiedObject.europeanArticleNumberEAN
-        range: string
-        required: false
-        multivalued: false
       name:
         description: "The name is any free human readable and possibly non unique\
           \ text naming the object.\r\n"
@@ -176,6 +260,19 @@ classes:
     description: Generic user of energy - a  point of consumption on the power system
       model.
     from_schema: https://cim.ucaiug.io/ns#TC57CIM.IEC61970.Base.Wires
+    attributes:
+      postalCode:
+        description: Postal code for the address.
+        slot_uri: cim:StreetAddress.postalCode
+        range: string
+        required: true
+        multivalued: false
+      PowerTransformer:
+        description: Associated PowerTransformer.
+        slot_uri: nl:EnergyConsumer.PowerTransformer
+        range: PowerTransformer
+        required: true
+        multivalued: false
     is_a: EnergyConnection
     class_uri: cim:EnergyConsumer
   EnergyConnection:
@@ -185,61 +282,3 @@ classes:
     is_a: ConductingEquipment
     abstract: true
     class_uri: cim:EnergyConnection
-  UsagePoint:
-    description: Logical or physical point in the network to which readings or events
-      may be attributed. Used at the place where a physical or virtual meter may be
-      located; however, it is not required that a meter be present.
-    from_schema: https://cim.ucaiug.io/ns#TC57CIM.IEC61968.Metering
-    is_a: IdentifiedObject
-    attributes:
-      isVirtual:
-        description: If true, this usage point is virtual, i.e., no physical location
-          exists in the network where a meter could be located to collect the meter
-          readings. For example, one may define a virtual usage point to serve as
-          an aggregation of usage for all of a company's premises distributed widely
-          across the distribution territory. Otherwise, the usage point is physical,
-          i.e., there is a logical point in the network where a meter could be located
-          to collect meter readings.
-        slot_uri: cim:UsagePoint.isVirtual
-        range: boolean
-        required: false
-        multivalued: false
-      Equipments:
-        description: All equipment connecting this usage point to the electrical grid.
-        slot_uri: cim:UsagePoint.Equipments
-        range: EnergyConsumer
-        required: false
-        multivalued: true
-    class_uri: cim:UsagePoint
-  Location:
-    description: "The place, scene, or point of something where someone or something\
-      \ has been, is, and/or will be at a given moment in time. It can be defined\
-      \ with one or more position points (coordinates) in a given coordinate system.\r\
-      \n"
-    from_schema: https://cim.ucaiug.io/ns#TC57CIM.IEC61968.Common
-    is_a: IdentifiedObject
-    attributes:
-      mainAddress:
-        description: Main address of the location.
-        slot_uri: cim:Location.mainAddress
-        range: StreetAddress
-        required: false
-        multivalued: false
-      PowerSystemResources:
-        description: All power system resources at this location.
-        slot_uri: cim:Location.PowerSystemResources
-        range: curie
-        required: true
-        multivalued: true
-    class_uri: cim:Location
-  StreetAddress:
-    description: General purpose street and postal address information.
-    from_schema: https://cim.ucaiug.io/ns#TC57CIM.IEC61968.Common
-    attributes:
-      postalCode:
-        description: Postal code for the address.
-        slot_uri: cim:StreetAddress.postalCode
-        range: string
-        required: true
-        multivalued: false
-    class_uri: cim:StreetAddress
