@@ -1,5 +1,7 @@
 = Netinzicht per gebied
 
+Information model for the "Netinzicht per gebied" data product.
+
 .Associated classes
 [d2,svg,theme=4,role=class-diagram]
 ----
@@ -102,5 +104,14 @@ legend: "" {
 }
 ----
 
-Information model for the "Netinzicht per gebied" data product.
+This data product requires its dataset to be structured in three separate
+parts:
 
+1. a list of `Substation`-s (150 kV || 220 kV);
+2. a list of `VoltageLevel`-s, associated to `Substation`. The `mRID` for the
+   `Substation` must be available in the dataset;
+3. a list of `EnergyConsumer`-s with `postalCode`, associated to
+   `VoltageLevel`. The `mRID` for the `VoltageLevel` must be available in the
+   dataset.
+
+A common use case is to provide a single JSON dataset per `Substation`.
