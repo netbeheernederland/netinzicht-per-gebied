@@ -1,3 +1,106 @@
 = Netinzicht per gebied
 
+.Associated classes
+[d2,svg,theme=4,role=class-diagram]
+----
+vars: {
+  d2-config: {
+    pad: 20
+  }
+}
+Dataset {
+  style {
+    fill: "#cccccc"
+    shadow: true
+  }
+}
+
+
+
+Substation {
+  style {
+    fill: "#eccfcb"
+    shadow: true
+  }
+}
+
+
+
+VoltageLevel {
+  style {
+    fill: "#eccfcb"
+    shadow: true
+  }
+}
+
+
+
+EnergyConsumer {
+  style {
+    fill: "#eccfcb"
+    shadow: true
+  }
+}
+
+
+
+
+Dataset -> Substation: Substations
+
+
+Dataset -> VoltageLevel: VoltageLevels
+
+
+Dataset -> EnergyConsumer: EnergyConsumers
+
+
+legend: "" {
+  style: {
+    fill: transparent
+    stroke: transparent
+  }
+  grid-rows: 3
+  grid-columns: 2
+  grid-gap: 10
+  near: bottom-right
+  iec61968_color: "" {
+    style: {
+      fill: "#d1e7c2"
+      stroke: black
+      stroke-width: 1
+    }
+    width: 10
+    height: 10
+  }
+  iec61968_text: "IEC61968 (Enterprise)" {
+    shape: text
+  }
+  iec61970_color: "" {
+    style: {
+      fill: "#eccfcb"
+      stroke: black
+      stroke-width: 1
+    }
+    width: 10
+    height: 10
+  }
+  iec61970_text: "IEC61970 (Grid)" {
+    shape: text
+  }
+  iec62325_color: "" {
+    style: {
+      fill: "#fffbef"
+      stroke: black
+      stroke-width: 1
+    }
+    width: 10
+    height: 10
+  }
+  iec62325_text: "IEC62325 (Market)" {
+    shape: text
+  }
+}
+----
+
 Information model for the "Netinzicht per gebied" data product.
+

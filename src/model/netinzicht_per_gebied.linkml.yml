@@ -19,101 +19,6 @@ annotations:
   model_uri: https://modellen.netbeheernederland.nl/netinzicht-per-gebied
   exchange_format: application/json
   model_type: data-product
-enums:
-  UnitMultiplier:
-    description: "The unit multipliers defined for the CIM.  When applied to unit\
-      \ symbols, the unit symbol is treated as a derived unit. Regardless of the contents\
-      \ of the unit symbol text, the unit symbol shall be treated as if it were a\
-      \ single-character unit symbol. Unit symbols should not contain multipliers,\
-      \ and it should be left to the multiplier to define the multiple for an entire\
-      \ data type. \r\n\r\nFor example, if a unit symbol is \"m2Pers\" and the multiplier\
-      \ is \"k\", then the value is k(m**2/s), and the multiplier applies to the entire\
-      \ final value, not to any individual part of the value. This can be conceptualized\
-      \ by substituting a derived unit symbol for the unit type. If one imagines that\
-      \ the symbol \"\xDE\" represents the derived unit \"m2Pers\", then applying\
-      \ the multiplier \"k\" can be conceptualized simply as \"k\xDE\".\r\n\r\nFor\
-      \ example, the SI unit for mass is \"kg\" and not \"g\".  If the unit symbol\
-      \ is defined as \"kg\", then the multiplier is applied to \"kg\" as a whole\
-      \ and does not replace the \"k\" in front of the \"g\". In this case, the multiplier\
-      \ of \"m\" would be used with the unit symbol of \"kg\" to represent one gram.\
-      \  As a text string, this violates the instructions in IEC 80000-1. However,\
-      \ because the unit symbol in CIM is treated as a derived unit instead of as\
-      \ an SI unit, it makes more sense to conceptualize the \"kg\" as if it were\
-      \ replaced by one of the proposed replacements for the SI mass symbol. If one\
-      \ imagines that the \"kg\" were replaced by a symbol \"\xDE\", then it is easier\
-      \ to conceptualize the multiplier \"m\" as creating the proper unit \"m\xDE\"\
-      , and not the forbidden unit \"mkg\"."
-    from_schema: http://data.netbeheernederland.nl/data-product/im-nbnl-equipment
-    enum_uri: cim:UnitMultiplier
-    permissible_values:
-      G:
-        meaning: cim:UnitMultiplier.G
-      h:
-        meaning: cim:UnitMultiplier.h
-      k:
-        meaning: cim:UnitMultiplier.k
-      m:
-        meaning: cim:UnitMultiplier.m
-      M:
-        meaning: cim:UnitMultiplier.M
-      micro:
-        meaning: cim:UnitMultiplier.micro
-      none:
-        meaning: cim:UnitMultiplier.none
-  UnitSymbol:
-    description: "The derived units defined for usage in the CIM. In some cases, the\
-      \ derived unit is equal to an SI unit. Whenever possible, the standard derived\
-      \ symbol is used instead of the formula for the derived unit. For example, the\
-      \ unit symbol Farad is defined as \"F\" instead of \"CPerV\". In cases where\
-      \ a standard symbol does not exist for a derived unit, the formula for the unit\
-      \ is used as the unit symbol. For example, density does not have a standard\
-      \ symbol and so it is represented as \"kgPerm3\". With the exception of the\
-      \ \"kg\", which is an SI unit, the unit symbols do not contain multipliers and\
-      \ therefore represent the base derived unit to which a multiplier can be applied\
-      \ as a whole. \r\nEvery unit symbol is treated as an unparseable text as if\
-      \ it were a single-letter symbol. The meaning of each unit symbol is defined\
-      \ by the accompanying descriptive text and not by the text contents of the unit\
-      \ symbol.\r\nTo allow the widest possible range of serializations without requiring\
-      \ special character handling, several substitutions are made which deviate from\
-      \ the format described in IEC 80000-1. The division symbol \"/\" is replaced\
-      \ by the letters \"Per\". Exponents are written in plain text after the unit\
-      \ as \"m3\" instead of being formatted as \"m\" with a superscript of 3  or\
-      \ introducing a symbol as in \"m^3\". The degree symbol \"\xB0\" is replaced\
-      \ with the letters \"deg\". Any clarification of the meaning for a substitution\
-      \ is included in the description for the unit symbol.\r\nNon-SI units are included\
-      \ in list of unit symbols to allow sources of data to be correctly labelled\
-      \ with their non-SI units (for example, a GPS sensor that is reporting numbers\
-      \ that represent feet instead of meters). This allows software to use the unit\
-      \ symbol information correctly convert and scale the raw data of those sources\
-      \ into SI-based units. \r\nThe integer values are used for harmonization with\
-      \ IEC 61850."
-    from_schema: http://data.netbeheernederland.nl/data-product/im-nbnl-equipment
-    enum_uri: cim:UnitSymbol
-    permissible_values:
-      A:
-        meaning: cim:UnitSymbol.A
-      Ah:
-        meaning: cim:UnitSymbol.Ah
-      none:
-        meaning: cim:UnitSymbol.none
-      ohm:
-        meaning: cim:UnitSymbol.ohm
-      V:
-        meaning: cim:UnitSymbol.V
-      VA:
-        meaning: cim:UnitSymbol.VA
-      VAh:
-        meaning: cim:UnitSymbol.VAh
-      VAr:
-        meaning: cim:UnitSymbol.VAr
-      VArh:
-        meaning: cim:UnitSymbol.VArh
-      W:
-        meaning: cim:UnitSymbol.W
-      Wb:
-        meaning: cim:UnitSymbol.Wb
-      Wh:
-        meaning: cim:UnitSymbol.Wh
 classes:
   Dataset:
     description: Root dataset for this JSON.
@@ -123,14 +28,15 @@ classes:
           generation or utilization, through which electric energy in bulk is
           passed for the purposes of switching or modifying its
           characteristics.
-        slot_uri: nl:Dataset.PowerTransformers
+        slot_uri: nl:Dataset.Substations
         range: Substation
         required: true
         multivalued: true
-      PowerTransformers:
-        description: Controls voltage and phase shift.
-        slot_uri: nl:Dataset.PowerTransformers
-        range: PowerTransformer
+      VoltageLevels:
+        description: A collection of equipment at one common system voltage
+          forming a switchgear.
+        slot_uri: nl:Dataset.VoltageLevels
+        range: VoltageLevel
         required: true
         multivalued: true
       EnergyConsumers:
@@ -143,36 +49,39 @@ classes:
     is_a: IdentifiedObject
     class_uri: dcat:Dataset
     tree_root: true
-  PowerTransformer:
-    description: "An electrical device consisting of two or more coupled windings,\
-      \ with or without a magnetic core, for introducing mutual coupling between electric\
-      \ circuits. Transformers can be used to control voltage and phase shift (active\
-      \ power flow).\r\nA power transformer may be composed of separate transformer\
-      \ tanks that need not be identical.\r\nA power transformer can be modelled with\
-      \ or without tanks and is intended for use in both balanced and unbalanced representations.\
-      \   A power transformer typically has two terminals, but may have one (grounding),\
-      \ three or more terminals.\r\nThe inherited association ConductingEquipment.BaseVoltage\
-      \ should not be used.  The association from TransformerEnd to BaseVoltage should\
-      \ be used instead."
-    from_schema: https://cim.ucaiug.io/ns#TC57CIM.IEC61970.Base.Wires
+  VoltageLevel:
+    description: A collection of equipment at one common system voltage forming a
+      switchgear. The equipment typically consists of breakers, busbars, instrumentation,
+      control, regulation and protection devices as well as assemblies of all these.
+    from_schema: https://cim.ucaiug.io/ns#TC57CIM.IEC61970.Base.Core
+    is_a: EquipmentContainer
     attributes:
-      multiplier:
-        slot_uri: cim:ActivePower.multiplier
-        range: UnitMultiplier
-        required: true
-        multivalued: false
-      unit:
-        slot_uri: cim:ActivePower.unit
-        range: UnitSymbol
-        required: true
-        multivalued: false
-      value:
-        slot_uri: cim:ActivePower.value
+      baseVoltage:
+        description: The base voltage used for all equipment within the voltage
+          level, in MW.
+        slot_uri: nl:VoltageLevel.BaseVoltage
         range: float
         required: true
         multivalued: false
-    is_a: ConductingEquipment
-    class_uri: cim:PowerTransformer
+        exact_mappings:
+          - cim:VoltageLevel.BaseVoltage
+      activePowerLimit:
+        description: Value of active power limit (_aanwezige
+          transportcapaciteit_). The attribute shall be a positive value or
+          zero, in MW
+        slot_uri: nl:VoltageLevel.activePowerLimit
+        range: float
+        required: true
+        multivalued: false
+        exact_mappings:
+          - cim:ActivePowerLimit.value
+      Substation:
+        description: The substation of the voltage level.
+        slot_uri: cim:VoltageLevel.Substation
+        range: Substation
+        required: true
+        multivalued: false
+    class_uri: cim:VoltageLevel
   ConductingEquipment:
     description: The parts of the AC power system that are designed to carry current
       or that are conductively connected through terminals.
@@ -190,8 +99,8 @@ classes:
       EquipmentContainer:
         description: Container of this equipment.
         slot_uri: cim:Equipment.EquipmentContainer
-        range: Substation
-        required: false
+        range: VoltageLevel
+        required: true
         multivalued: false
     class_uri: cim:Equipment
   PowerSystemResource:
@@ -241,6 +150,15 @@ classes:
       \ utilization, through which electric energy in bulk is passed for the purposes\
       \ of switching or modifying its characteristics. \r\n"
     from_schema: https://cim.ucaiug.io/ns#TC57CIM.IEC61970.Base.Core
+    attributes:
+      Region:
+        description: The SubGeographicalRegion containing the substation.
+        slot_uri: nl:Substation.Region
+        range: string
+        required: true
+        multivalued: false
+        exact_mappings:
+          - cim:Substation.Region
     is_a: EquipmentContainer
     class_uri: cim:Substation
   EquipmentContainer:
@@ -262,15 +180,9 @@ classes:
     from_schema: https://cim.ucaiug.io/ns#TC57CIM.IEC61970.Base.Wires
     attributes:
       postalCode:
-        description: Postal code for the address.
+        description: Postal code for the EnergyConsumer.
         slot_uri: cim:StreetAddress.postalCode
         range: string
-        required: true
-        multivalued: false
-      PowerTransformer:
-        description: Associated PowerTransformer.
-        slot_uri: nl:EnergyConsumer.PowerTransformer
-        range: PowerTransformer
         required: true
         multivalued: false
     is_a: EnergyConnection
