@@ -1,0 +1,8 @@
+# Changes here will be overwritten by Copier
+_commit: '0.6'
+_src_path: gh:netbeheernederland/template-dp
+description: Information model for the "Netinzicht per gebied" data product.
+exchange_format: JSON-LD
+git_protocol: SSH
+name: netinzicht-per-gebied
+title: Netinzicht per gebied
