@@ -113,6 +113,30 @@ enums:
       Wh:
         meaning: cim:UnitSymbol.Wh
 classes:
+  GeographicalRegion:
+    description: "A geographical region of a power system network model.\r\n"
+    from_schema: https://cim.ucaiug.io/ns#TC57CIM.IEC61970.Base.Core
+    is_a: IdentifiedObject
+    class_uri: cim:GeographicalRegion
+    tree_root: true
+  SubGeographicalRegion:
+    description: "A subset of a geographical region of a power system network model.\r\
+      \n"
+    from_schema: https://cim.ucaiug.io/ns#TC57CIM.IEC61970.Base.Core
+    is_a: IdentifiedObject
+    attributes:
+      Region:
+        description: The geographical region which this sub-geographical region is
+          within.
+        slot_uri: cim:SubGeographicalRegion.Region
+        range: GeographicalRegion
+        required: true
+        multivalued: false
+      title:
+        slot_uri: dcterms:title
+        required: false
+        multivalued: false
+    class_uri: cim:SubGeographicalRegion
   PowerTransformer:
     description: "An electrical device consisting of  two or more coupled windings,\
       \ with or without a magnetic core, for introducing mutual coupling between electric\
@@ -235,8 +259,14 @@ classes:
       \ of switching or modifying its characteristics. \r\n"
     from_schema: https://cim.ucaiug.io/ns#TC57CIM.IEC61970.Base.Core
     is_a: EquipmentContainer
+    attributes:
+      Region:
+        description: The SubGeographicalRegion containing the substation.
+        slot_uri: cim:Substation.Region
+        range: SubGeographicalRegion
+        required: true
+        multivalued: false
     class_uri: cim:Substation
-    tree_root: true
   EquipmentContainer:
     description: 'A modelling construct to provide a root class for containing equipment. '
     from_schema: https://cim.ucaiug.io/ns#TC57CIM.IEC61970.Base.Core

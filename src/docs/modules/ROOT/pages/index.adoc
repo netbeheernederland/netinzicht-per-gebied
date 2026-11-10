@@ -97,17 +97,21 @@ BusNameMarker.class: grid
 ConnectivityNode.class: grid
 CoordinateSystem.class: enterprise
 EnergyConsumer.class: grid
+GeographicalRegion.class: grid
 Location.class: enterprise
 OperationalLimitSet.class: grid
 PositionPoint.class: enterprise
 PowerTransformer.class: grid
 PowerTransformerEnd.class: grid
 StreetAddress.class: enterprise
+SubGeographicalRegion.class: grid
 Substation.class: grid
 Terminal.class: grid
 TopologicalNode.class: grid
 VoltageLevel.class: grid
 
+GeographicalRegion -- SubGeographicalRegion
+Substation -- SubGeographicalRegion
 PowerTransformer -- BaseVoltage
 PowerTransformer -- Substation
 PowerTransformer -- VoltageLevel
