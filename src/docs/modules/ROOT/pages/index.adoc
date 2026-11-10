@@ -133,4 +133,5 @@ Location -- Substation
 Location -- EnergyConsumer
 Location -- CoordinateSystem
 PositionPoint -- Location
+TopologicalNode -- Terminal
 ----

@@ -551,7 +551,7 @@ classes:
           if connectivity nodes are in the model, this association would probably
           not be used as an input specification.
         slot_uri: cim:TopologicalNode.Terminal
-        range: curie
+        range: Terminal
         required: true
         multivalued: true
     class_uri: cim:TopologicalNode
