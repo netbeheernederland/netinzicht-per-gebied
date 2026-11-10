@@ -10,12 +10,685 @@ prefixes:
   linkml: https://w3id.org/linkml/
   cim: https://cim.ucaiug.io/ns#
   dcterms: http://purl.org/dc/terms/
-  nbnl-term: https://begrippen.netbeheernederland.nl/id/
+  nl: https://cim.ucaiug.io/ns/nl#
   unit: http://qudt.org/vocab/unit/
+  eu: https://cim.ucaiug.io/ns/eu#
 annotations:
   model_uri: https://modellen.netbeheernederland.nl/netinzicht-per-gebied
   exchange_format: application/ld+json
   model_type: data-product
-types: {}
-enums: {}
-classes: {}
+enums:
+  UnitMultiplier:
+    description: "The unit multipliers defined for the CIM.  When applied to unit\
+      \ symbols, the unit symbol is treated as a derived unit. Regardless of the contents\
+      \ of the unit symbol text, the unit symbol shall be treated as if it were a\
+      \ single-character unit symbol. Unit symbols should not contain multipliers,\
+      \ and it should be left to the multiplier to define the multiple for an entire\
+      \ data type. \r\n\r\nFor example, if a unit symbol is \"m2Pers\" and the multiplier\
+      \ is \"k\", then the value is k(m**2/s), and the multiplier applies to the entire\
+      \ final value, not to any individual part of the value. This can be conceptualized\
+      \ by substituting a derived unit symbol for the unit type. If one imagines that\
+      \ the symbol \"\xDE\" represents the derived unit \"m2Pers\", then applying\
+      \ the multiplier \"k\" can be conceptualized simply as \"k\xDE\".\r\n\r\nFor\
+      \ example, the SI unit for mass is \"kg\" and not \"g\".  If the unit symbol\
+      \ is defined as \"kg\", then the multiplier is applied to \"kg\" as a whole\
+      \ and does not replace the \"k\" in front of the \"g\". In this case, the multiplier\
+      \ of \"m\" would be used with the unit symbol of \"kg\" to represent one gram.\
+      \  As a text string, this violates the instructions in IEC 80000-1. However,\
+      \ because the unit symbol in CIM is treated as a derived unit instead of as\
+      \ an SI unit, it makes more sense to conceptualize the \"kg\" as if it were\
+      \ replaced by one of the proposed replacements for the SI mass symbol. If one\
+      \ imagines that the \"kg\" were replaced by a symbol \"\xDE\", then it is easier\
+      \ to conceptualize the multiplier \"m\" as creating the proper unit \"m\xDE\"\
+      , and not the forbidden unit \"mkg\"."
+    from_schema: https://modellen.netbeheernederland.nl/nbnl-equipment
+    enum_uri: cim:UnitMultiplier
+    permissible_values:
+      G:
+        meaning: cim:UnitMultiplier.G
+      h:
+        meaning: cim:UnitMultiplier.h
+      k:
+        meaning: cim:UnitMultiplier.k
+      m:
+        meaning: cim:UnitMultiplier.m
+      M:
+        meaning: cim:UnitMultiplier.M
+      micro:
+        meaning: cim:UnitMultiplier.micro
+      none:
+        meaning: cim:UnitMultiplier.none
+  UnitSymbol:
+    description: "The derived units defined for usage in the CIM. In some cases, the\
+      \ derived unit is equal to an SI unit. Whenever possible, the standard derived\
+      \ symbol is used instead of the formula for the derived unit. For example, the\
+      \ unit symbol Farad is defined as \"F\" instead of \"CPerV\". In cases where\
+      \ a standard symbol does not exist for a derived unit, the formula for the unit\
+      \ is used as the unit symbol. For example, density does not have a standard\
+      \ symbol and so it is represented as \"kgPerm3\". With the exception of the\
+      \ \"kg\", which is an SI unit, the unit symbols do not contain multipliers and\
+      \ therefore represent the base derived unit to which a multiplier can be applied\
+      \ as a whole. \r\nEvery unit symbol is treated as an unparseable text as if\
+      \ it were a single-letter symbol. The meaning of each unit symbol is defined\
+      \ by the accompanying descriptive text and not by the text contents of the unit\
+      \ symbol.\r\nTo allow the widest possible range of serializations without requiring\
+      \ special character handling, several substitutions are made which deviate from\
+      \ the format described in IEC 80000-1. The division symbol \"/\" is replaced\
+      \ by the letters \"Per\". Exponents are written in plain text after the unit\
+      \ as \"m3\" instead of being formatted as \"m\" with a superscript of 3  or\
+      \ introducing a symbol as in \"m^3\". The degree symbol \"\xB0\" is replaced\
+      \ with the letters \"deg\". Any clarification of the meaning for a substitution\
+      \ is included in the description for the unit symbol.\r\nNon-SI units are included\
+      \ in list of unit symbols to allow sources of data to be correctly labelled\
+      \ with their non-SI units (for example, a GPS sensor that is reporting numbers\
+      \ that represent feet instead of meters). This allows software to use the unit\
+      \ symbol information correctly convert and scale the raw data of those sources\
+      \ into SI-based units. \r\nThe integer values are used for harmonization with\
+      \ IEC 61850."
+    from_schema: https://modellen.netbeheernederland.nl/nbnl-equipment
+    enum_uri: cim:UnitSymbol
+    permissible_values:
+      A:
+        meaning: cim:UnitSymbol.A
+      Ah:
+        meaning: cim:UnitSymbol.Ah
+      none:
+        meaning: cim:UnitSymbol.none
+      ohm:
+        meaning: cim:UnitSymbol.ohm
+      V:
+        meaning: cim:UnitSymbol.V
+      VA:
+        meaning: cim:UnitSymbol.VA
+      VAh:
+        meaning: cim:UnitSymbol.VAh
+      VAr:
+        meaning: cim:UnitSymbol.VAr
+      VArh:
+        meaning: cim:UnitSymbol.VArh
+      W:
+        meaning: cim:UnitSymbol.W
+      Wb:
+        meaning: cim:UnitSymbol.Wb
+      Wh:
+        meaning: cim:UnitSymbol.Wh
+classes:
+  PowerTransformer:
+    description: "An electrical device consisting of  two or more coupled windings,\
+      \ with or without a magnetic core, for introducing mutual coupling between electric\
+      \ circuits. Transformers can be used to control voltage and phase shift (active\
+      \ power flow).\r\nA power transformer may be composed of separate transformer\
+      \ tanks that need not be identical.\r\nA power transformer can be modelled with\
+      \ or without tanks and is intended for use in both balanced and unbalanced representations.\
+      \   A power transformer typically has two terminals, but may have one (grounding),\
+      \ three or more terminals.\r\nThe inherited association ConductingEquipment.BaseVoltage\
+      \ should not be used.  The association from TransformerEnd to BaseVoltage should\
+      \ be used instead."
+    from_schema: https://cim.ucaiug.io/ns#TC57CIM.IEC61970.Base.Wires
+    is_a: ConductingEquipment
+    class_uri: cim:PowerTransformer
+  ConductingEquipment:
+    description: The parts of the AC power system that are designed to carry current
+      or that are conductively connected through terminals.
+    from_schema: https://cim.ucaiug.io/ns#TC57CIM.IEC61970.Base.Core
+    is_a: Equipment
+    abstract: true
+    attributes:
+      BaseVoltage:
+        description: Base voltage of this conducting equipment. Use only when there
+          is no voltage level container used and only one base voltage applies.
+        slot_uri: cim:ConductingEquipment.BaseVoltage
+        range: BaseVoltage
+        required: false
+        multivalued: false
+    class_uri: cim:ConductingEquipment
+  BaseVoltage:
+    description: 'Defines a system base voltage which is referenced. '
+    from_schema: https://cim.ucaiug.io/ns#TC57CIM.IEC61970.Base.Core
+    is_a: IdentifiedObject
+    class_uri: cim:BaseVoltage
+  Equipment:
+    description: The parts of a power system that are physical devices, electronic
+      or mechanical.
+    from_schema: https://cim.ucaiug.io/ns#TC57CIM.IEC61970.Base.Core
+    is_a: PowerSystemResource
+    abstract: true
+    attributes:
+      EquipmentContainer:
+        description: Container of this equipment.
+        slot_uri: cim:Equipment.EquipmentContainer
+        required: false
+        multivalued: false
+        any_of:
+        - range: Substation
+        - range: VoltageLevel
+      aggregate:
+        description: "The aggregate flag provides an alternative way of representing\
+          \ an aggregated (equivalent) element. It is applicable in cases when the\
+          \ dedicated classes for equivalent equipment do not have all of the attributes\
+          \ necessary to represent the required level of detail.  In case the flag\
+          \ is set to \u201Ctrue\u201D the single instance of equipment represents\
+          \ multiple pieces of equipment that have been modelled together as an aggregate\
+          \ equivalent obtained by a network reduction procedure. Examples would be\
+          \ power transformers or synchronous machines operating in parallel modelled\
+          \ as a single aggregate power transformer or aggregate synchronous machine.\
+          \  \r\nThe attribute is not used for EquivalentBranch, EquivalentShunt and\
+          \ EquivalentInjection."
+        slot_uri: cim:Equipment.aggregate
+        range: boolean
+        required: false
+        multivalued: false
+    class_uri: cim:Equipment
+  PowerSystemResource:
+    description: A power system resource (PSR) can be an item of equipment such as
+      a switch, an equipment container containing many individual items of equipment
+      such as a substation, or an organisational entity such as sub-control area.
+      Power system resources can have measurements associated.
+    from_schema: https://cim.ucaiug.io/ns#TC57CIM.IEC61970.Base.Core
+    is_a: IdentifiedObject
+    abstract: true
+    class_uri: cim:PowerSystemResource
+  IdentifiedObject:
+    description: This is a root class to provide common identification for all classes
+      needing identification and naming attributes.
+    from_schema: https://cim.ucaiug.io/ns#TC57CIM.IEC61970.Base.Core
+    abstract: true
+    attributes:
+      description:
+        description: The description is a free human readable text describing or naming
+          the object. It may be non unique and may not correlate to a naming hierarchy.
+        slot_uri: cim:IdentifiedObject.description
+        range: string
+        required: false
+        multivalued: false
+      mRID:
+        description: "Master resource identifier issued by a model authority. The\
+          \ mRID is unique within an exchange context. Global uniqueness is easily\
+          \ achieved by using a UUID, as specified in RFC 4122, for the mRID. The\
+          \ use of UUID is strongly recommended.\r\nFor CIMXML data files in RDF syntax\
+          \ conforming to IEC 61970-552, the mRID is mapped to rdf:ID or rdf:about\
+          \ attributes that identify CIM object elements."
+        slot_uri: cim:IdentifiedObject.mRID
+        identifier: true
+        range: string
+        required: true
+        multivalued: false
+      europeanArticleNumberEAN:
+        description: The attribute is used for an exchange of the EAN code (European
+          Article Number). The length of the string is 18 characters as defined by
+          the EAN code.
+        slot_uri: nl:IdentifiedObject.europeanArticleNumberEAN
+        range: string
+        required: false
+        multivalued: false
+      name:
+        description: "The name is any free human readable and possibly non unique\
+          \ text naming the object.\r\n"
+        slot_uri: cim:IdentifiedObject.name
+        range: string
+        required: false
+        multivalued: false
+    class_uri: cim:IdentifiedObject
+  Substation:
+    description: "A collection of equipment for purposes other than generation or\
+      \ utilization, through which electric energy in bulk is passed for the purposes\
+      \ of switching or modifying its characteristics. \r\n"
+    from_schema: https://cim.ucaiug.io/ns#TC57CIM.IEC61970.Base.Core
+    is_a: EquipmentContainer
+    class_uri: cim:Substation
+    tree_root: true
+  EquipmentContainer:
+    description: 'A modelling construct to provide a root class for containing equipment. '
+    from_schema: https://cim.ucaiug.io/ns#TC57CIM.IEC61970.Base.Core
+    is_a: ConnectivityNodeContainer
+    abstract: true
+    class_uri: cim:EquipmentContainer
+  ConnectivityNodeContainer:
+    description: "A base class for all objects that may contain connectivity nodes\
+      \ or topological nodes.\r\n"
+    from_schema: https://cim.ucaiug.io/ns#TC57CIM.IEC61970.Base.Core
+    is_a: PowerSystemResource
+    abstract: true
+    class_uri: cim:ConnectivityNodeContainer
+  EnergyConsumer:
+    description: Generic user of energy - a  point of consumption on the power system
+      model.
+    from_schema: https://cim.ucaiug.io/ns#TC57CIM.IEC61970.Base.Wires
+    is_a: EnergyConnection
+    class_uri: cim:EnergyConsumer
+  EnergyConnection:
+    description: A connection of energy generation or consumption on the power system
+      model.
+    from_schema: https://cim.ucaiug.io/ns#TC57CIM.IEC61970.Base.Wires
+    is_a: ConductingEquipment
+    abstract: true
+    class_uri: cim:EnergyConnection
+  ActivePowerLimit:
+    description: Limit on active power flow.
+    from_schema: https://cim.ucaiug.io/ns#TC57CIM.IEC61970.Base.OperationalLimits
+    is_a: OperationalLimit
+    attributes:
+      value:
+        description: Value of active power limit. The attribute shall be a positive
+          value or zero.
+        slot_uri: cim:ActivePowerLimit.value
+        range: ActivePower
+        required: true
+        multivalued: false
+    class_uri: cim:ActivePowerLimit
+  ActivePower:
+    annotations:
+      represents_cim_data_type:
+        tag: represents_cim_data_type
+        value: true
+    description: Product of RMS value of the voltage and the RMS value of the in-phase
+      component of the current.
+    from_schema: https://cim.ucaiug.io/ns#TC57CIM.IEC61970.Base.Domain
+    attributes:
+      multiplier:
+        slot_uri: cim:ActivePower.multiplier
+        range: UnitMultiplier
+        required: true
+        multivalued: false
+      unit:
+        slot_uri: cim:ActivePower.unit
+        range: UnitSymbol
+        required: true
+        multivalued: false
+      value:
+        slot_uri: cim:ActivePower.value
+        range: float
+        required: true
+        multivalued: false
+    class_uri: cim:ActivePower
+  OperationalLimit:
+    description: "A value and normal value associated with a specific kind of limit.\
+      \ \r\nThe sub class value and normalValue attributes vary inversely to the associated\
+      \ OperationalLimitType.acceptableDuration (acceptableDuration for short).  \r\
+      \nIf a particular piece of equipment has multiple operational limits of the\
+      \ same kind (apparent power, current, etc.), the limit with the greatest acceptableDuration\
+      \ shall have the smallest limit value and the limit with the smallest acceptableDuration\
+      \ shall have the largest limit value.  Note: A large current can only be allowed\
+      \ to flow through a piece of equipment for a short duration without causing\
+      \ damage, but a lesser current can be allowed to flow for a longer duration. "
+    from_schema: https://cim.ucaiug.io/ns#TC57CIM.IEC61970.Base.OperationalLimits
+    is_a: IdentifiedObject
+    abstract: true
+    attributes:
+      OperationalLimitSet:
+        description: The limit set to which the limit values belong.
+        slot_uri: cim:OperationalLimit.OperationalLimitSet
+        range: OperationalLimitSet
+        required: false
+        multivalued: false
+      positiveFlowIn:
+        description: If true then this OperationalLimit follows the convention that
+          a positive value measured at the Terminal means power is flowing into the
+          related PowerSystemResource.
+        slot_uri: nl:OperationalLimit.positiveFlowIn
+        range: boolean
+        required: false
+        multivalued: false
+    class_uri: cim:OperationalLimit
+  OperationalLimitSet:
+    description: "A set of limits associated with equipment.  Sets of limits might\
+      \ apply to a specific temperature, or season for example. A set of limits may\
+      \ contain different severities of limit levels that would apply to the same\
+      \ equipment. The set may contain limits of different types such as apparent\
+      \ power and current limits or high and low voltage limits  that are logically\
+      \ applied together as a set.\r\n"
+    from_schema: https://cim.ucaiug.io/ns#TC57CIM.IEC61970.Base.OperationalLimits
+    is_a: IdentifiedObject
+    attributes:
+      Equipment:
+        description: The equipment to which the limit set applies.
+        slot_uri: cim:OperationalLimitSet.Equipment
+        required: false
+        multivalued: false
+        any_of:
+        - range: PowerTransformer
+      Terminal:
+        description: The terminal where the operational limit set apply.
+        slot_uri: cim:OperationalLimitSet.Terminal
+        range: Terminal
+        required: false
+        multivalued: false
+    class_uri: cim:OperationalLimitSet
+  VoltageLevel:
+    description: A collection of equipment at one common system voltage forming a
+      switchgear. The equipment typically consists of breakers, busbars, instrumentation,
+      control, regulation and protection devices as well as assemblies of all these.
+    from_schema: https://cim.ucaiug.io/ns#TC57CIM.IEC61970.Base.Core
+    is_a: EquipmentContainer
+    attributes:
+      BaseVoltage:
+        description: The base voltage used for all equipment within the voltage level.
+        slot_uri: cim:VoltageLevel.BaseVoltage
+        range: BaseVoltage
+        required: true
+        multivalued: false
+      Substation:
+        description: The substation of the voltage level.
+        slot_uri: cim:VoltageLevel.Substation
+        range: Substation
+        required: true
+        multivalued: false
+    class_uri: cim:VoltageLevel
+  PowerTransformerEnd:
+    description: "A PowerTransformerEnd is associated with each Terminal of a PowerTransformer.\r\
+      \nThe impedance values r, r0, x, and x0 of a PowerTransformerEnd represents\
+      \ a star equivalent as follows.\r\n1) for a two Terminal PowerTransformer the\
+      \ high voltage (TransformerEnd.endNumber=1) PowerTransformerEnd has non zero\
+      \ values on r, r0, x, and x0 while the low voltage (TransformerEnd.endNumber=2)\
+      \ PowerTransformerEnd has zero values for r, r0, x, and x0.  Parameters are\
+      \ always provided, even if the PowerTransformerEnds have the same rated voltage.\
+      \  In this case, the parameters are provided at the PowerTransformerEnd which\
+      \ has TransformerEnd.endNumber equal to 1.\r\n2) for a three Terminal PowerTransformer\
+      \ the three PowerTransformerEnds represent a star equivalent with each leg in\
+      \ the star represented by r, r0, x, and x0 values.\r\n3) For a three Terminal\
+      \ transformer each PowerTransformerEnd shall have g, g0, b and b0 values corresponding\
+      \ to the no load losses distributed on the three PowerTransformerEnds. The total\
+      \ no load loss shunt impedances may also be placed at one of the PowerTransformerEnds,\
+      \ preferably the end numbered 1, having the shunt values on end 1.  This is\
+      \ the preferred way.\r\n4) for a PowerTransformer with more than three Terminals\
+      \ the PowerTransformerEnd impedance values cannot be used. Instead use the TransformerMeshImpedance\
+      \ or split the transformer into multiple PowerTransformers.\r\nEach PowerTransformerEnd\
+      \ must be contained by a PowerTransformer. Because a PowerTransformerEnd (or\
+      \ any other object) can not be contained by more than one parent, a PowerTransformerEnd\
+      \ can not have an association to an EquipmentContainer (Substation, VoltageLevel,\
+      \ etc)."
+    from_schema: https://cim.ucaiug.io/ns#TC57CIM.IEC61970.Base.Wires
+    is_a: TransformerEnd
+    attributes:
+      PowerTransformer:
+        description: The power transformer of this power transformer end.
+        slot_uri: cim:PowerTransformerEnd.PowerTransformer
+        range: PowerTransformer
+        required: true
+        multivalued: false
+    class_uri: cim:PowerTransformerEnd
+  TransformerEnd:
+    description: A conducting connection point of a power transformer. It corresponds
+      to a physical transformer winding terminal.  In earlier CIM versions, the TransformerWinding
+      class served a similar purpose, but this class is more flexible because it associates
+      to terminal but is not a specialization of ConductingEquipment.
+    from_schema: https://cim.ucaiug.io/ns#TC57CIM.IEC61970.Base.Wires
+    is_a: IdentifiedObject
+    abstract: true
+    attributes:
+      endNumber:
+        description: "Number for this transformer end, corresponding to the end's\
+          \ order in the power transformer vector group or phase angle clock number.\
+          \  Highest voltage winding should be 1.  Each end within a power transformer\
+          \ should have a unique subsequent end number.   Note the transformer end\
+          \ number need not match the terminal sequence number.\r\n"
+        slot_uri: cim:TransformerEnd.endNumber
+        range: integer
+        required: false
+        multivalued: false
+      Terminal:
+        description: Terminal of the power transformer to which this transformer end
+          belongs.
+        slot_uri: cim:TransformerEnd.Terminal
+        range: Terminal
+        required: true
+        multivalued: false
+    class_uri: cim:TransformerEnd
+  Terminal:
+    description: An AC electrical connection point to a piece of conducting equipment.
+      Terminals are connected at physical connection points called connectivity nodes.
+    from_schema: https://cim.ucaiug.io/ns#TC57CIM.IEC61970.Base.Core
+    is_a: ACDCTerminal
+    attributes:
+      ConnectivityNode:
+        description: The connectivity node to which this terminal connects with zero
+          impedance.
+        slot_uri: cim:Terminal.ConnectivityNode
+        range: ConnectivityNode
+        required: false
+        multivalued: false
+      ConductingEquipment:
+        description: The conducting equipment of the terminal. Conducting equipment
+          have  terminals that may be connected to other conducting equipment terminals
+          via connectivity nodes or topological nodes.
+        slot_uri: cim:Terminal.ConductingEquipment
+        required: true
+        multivalued: false
+        any_of:
+        - range: PowerTransformer
+        - range: EnergyConsumer
+    class_uri: cim:Terminal
+  ConnectivityNode:
+    description: Connectivity nodes are points where terminals of AC conducting equipment
+      are connected together with zero impedance.
+    from_schema: https://cim.ucaiug.io/ns#TC57CIM.IEC61970.Base.Core
+    is_a: IdentifiedObject
+    attributes:
+      ConnectivityNodeContainer:
+        description: Container of this connectivity node.
+        slot_uri: cim:ConnectivityNode.ConnectivityNodeContainer
+        required: true
+        multivalued: false
+        any_of:
+        - range: VoltageLevel
+      BoundaryPoint:
+        description: The boundary point associated with the connectivity node.
+        slot_uri: eu:ConnectivityNode.BoundaryPoint
+        range: BoundaryPoint
+        required: false
+        multivalued: false
+    class_uri: cim:ConnectivityNode
+  BoundaryPoint:
+    description: Designates a connection point at which one or more model authority
+      sets shall connect to. The location of the connection point as well as other
+      properties are agreed between organisations responsible for the interconnection,
+      hence all attributes of the class represent this agreement.  It is primarily
+      used in a boundary model authority set which can contain one or many BoundaryPoint-s
+      among other Equipment-s and their connections.
+    is_a: PowerSystemResource
+    attributes:
+      fromEndIsoCode:
+        description: 'The ISO code of the region which the "From" side of the Boundary
+          point belongs to or it is connected to.
+
+          The ISO code is a two-character country code as defined by ISO 3166 (http://www.iso.org/iso/country_codes).
+          The length of the string is 2 characters maximum.'
+        slot_uri: eu:BoundaryPoint.fromEndIsoCode
+        range: string
+        required: true
+        multivalued: false
+      fromEndNameTso:
+        description: Identifies the name of the transmission system operator, distribution
+          system operator or other entity at which the "From" side of the interconnection
+          is connected to. The length of the string is 64 characters maximum.
+        slot_uri: eu:BoundaryPoint.fromEndNameTso
+        range: string
+        required: true
+        multivalued: false
+      toEndIsoCode:
+        description: 'The ISO code of the region which the "To" side of the Boundary
+          point belongs to or is connected to.
+
+          The ISO code is a two-character country code as defined by ISO 3166 (http://www.iso.org/iso/country_codes).
+          The length of the string is 2 characters maximum.'
+        slot_uri: eu:BoundaryPoint.toEndIsoCode
+        range: string
+        required: true
+        multivalued: false
+      toEndNameTso:
+        description: Identifies the name of the transmission system operator, distribution
+          system operator or other entity at which the "To" side of the interconnection
+          is connected to. The length of the string is 64 characters maximum.
+        slot_uri: eu:BoundaryPoint.toEndNameTso
+        range: string
+        required: true
+        multivalued: false
+    class_uri: eu:BoundaryPoint
+  ACDCTerminal:
+    description: An electrical connection point (AC or DC) to a piece of conducting
+      equipment. Terminals are connected at physical connection points called connectivity
+      nodes.
+    from_schema: https://cim.ucaiug.io/ns#TC57CIM.IEC61970.Base.Core
+    is_a: IdentifiedObject
+    abstract: true
+    class_uri: cim:ACDCTerminal
+  TopologicalNode:
+    description: For a detailed substation model a topological node is a set of
+      connectivity nodes that, in the current network state, are connected
+      together through any type of closed switches, including  jumpers.
+      Topological nodes change as the current network state changes (i.e.,
+      switches, breakers, etc. change state).  For a planning model, switch
+      statuses are not used to form topological nodes.  Instead they are
+      manually created or deleted in a model builder tool. Topological nodes
+      maintained this way are also called _busses_.
+    from_schema: https://cim.ucaiug.io/ns#TC57CIM.IEC61970.Base.Topology
+    is_a: IdentifiedObject
+    attributes:
+      Terminal:
+        description: The terminals associated with the topological node. This can
+          be used as an alternative to the connectivity node path to terminal, thus
+          making it unnecessary to model connectivity nodes in some cases. Note that
+          if connectivity nodes are in the model, this association would probably
+          not be used as an input specification.
+        slot_uri: cim:TopologicalNode.Terminal
+        range: curie
+        required: true
+        multivalued: true
+    class_uri: cim:TopologicalNode
+  BusNameMarker:
+    description: 'Used to apply user standard names to TopologicalNodes. Associated
+      with one or more terminals that are normally connected with the bus name.    The
+      associated terminals are normally connected by non-retained switches. For a
+      ring bus station configuration, all BusbarSection terminals in the ring are
+      typically associated.   For a breaker and a half scheme, both BusbarSections
+      would normally be associated.  For a ring bus, all BusbarSections would normally
+      be associated.  For a "straight" busbar configuration, normally only the main
+      terminal at the BusbarSection would be associated.  '
+    from_schema: https://cim.ucaiug.io/ns#TC57CIM.IEC61970.Base.Topology
+    is_a: IdentifiedObject
+    attributes:
+      Terminal:
+        description: The terminals associated with this bus name marker.
+        slot_uri: cim:BusNameMarker.Terminal
+        range: curie
+        required: true
+        multivalued: true
+      TopologicalNode:
+        description: A user defined topological node that was originally defined in
+          a planning model not yet having topology described by ConnectivityNodes.
+          Once ConnectivityNodes has been created they may linked to user defined
+          ToplogicalNdes using BusNameMarkers.
+        slot_uri: cim:BusNameMarker.TopologicalNode
+        range: TopologicalNode
+        required: false
+        multivalued: false
+    class_uri: cim:BusNameMarker
+  CoordinateSystem:
+    class_uri: cim:CoordinateSystem
+    is_a: IdentifiedObject
+    from_schema: https://cim.ucaiug.io/ns#TC57CIM.IEC61968.Common
+    description: "Coordinate reference system.\r\n"
+    attributes:
+      crsUrn:
+        slot_uri: cim:CoordinateSystem.crsUrn
+        range: string
+        required: false
+        multivalued: false
+        description: "A Uniform Resource Name (URN) for the coordinate reference system\
+          \ (crs) used to define 'Location.PositionPoints'.\r\nAn example would be\
+          \ the European Petroleum Survey Group (EPSG) code for a coordinate reference\
+          \ system, defined in URN under the Open Geospatial Consortium (OGC) namespace\
+          \ as: urn:ogc:def:crs:EPSG::XXXX, where XXXX is an EPSG code (a full list\
+          \ of codes can be found at the EPSG Registry web site http://www.epsg-registry.org/).\
+          \ To define the coordinate system as being WGS84 (latitude, longitude) using\
+          \ an EPSG OGC, this attribute would be urn:ogc:def:crs:EPSG::4.3.2.6\r\n\
+          A profile should limit this code to a set of allowed URNs agreed to by all\
+          \ sending and receiving parties."
+  Location:
+    description: "The place, scene, or point of something where someone or something\
+      \ has been, is, and/or will be at a given moment in time. It can be defined\
+      \ with one or more position points (coordinates) in a given coordinate system.\r\
+      \n"
+    from_schema: https://cim.ucaiug.io/ns#TC57CIM.IEC61968.Common
+    is_a: IdentifiedObject
+    attributes:
+      mainAddress:
+        description: Main address of the location.
+        slot_uri: cim:Location.mainAddress
+        range: StreetAddress
+        required: false
+        multivalued: false
+      PowerSystemResources:
+        description: All power system resources at this location.
+        slot_uri: cim:Location.PowerSystemResources
+        range: PowerSystemResource
+        required: true
+        multivalued: true
+      CoordinateSystem:
+        slot_uri: cim:Location.CoordinateSystem
+        range: CoordinateSystem
+        required: false
+        multivalued: false
+        description: Coordinate system used to describe position points of this location.
+    class_uri: cim:Location
+  PositionPoint:
+    class_uri: cim:PositionPoint
+    from_schema: https://cim.ucaiug.io/ns#TC57CIM.IEC61968.Common
+    description: Set of spatial coordinates that determine a point, defined in the
+      coordinate system specified in 'Location.CoordinateSystem'. Use a single position
+      point instance to describe a point-oriented location. Use a sequence of position
+      points to describe a line-oriented object (physical location of non-point oriented
+      objects like cables or lines), or area of an object (like a substation or a
+      geographical zone - in this case, have first and last position point with the
+      same values).
+    attributes:
+      groupNumber:
+        slot_uri: cim:PositionPoint.groupNumber
+        range: integer
+        required: false
+        multivalued: false
+        description: Zero-relative sequence number of this group within a series of
+          points; used when there is a need to express disjoint groups of points that
+          are considered to be part of a single location.
+      sequenceNumber:
+        slot_uri: cim:PositionPoint.sequenceNumber
+        range: integer
+        required: false
+        multivalued: false
+        description: Zero-relative sequence number of this point within a series of
+          points.
+      xPosition:
+        slot_uri: cim:PositionPoint.xPosition
+        range: string
+        required: true
+        multivalued: false
+        description: X axis position.
+      yPosition:
+        slot_uri: cim:PositionPoint.yPosition
+        range: string
+        required: true
+        multivalued: false
+        description: Y axis position.
+      zPosition:
+        slot_uri: cim:PositionPoint.zPosition
+        range: string
+        required: false
+        multivalued: false
+        description: (if applicable) Z axis position.
+      Location:
+        slot_uri: cim:PositionPoint.Location
+        range: Location
+        required: true
+        multivalued: false
+        description: Location described by this position point.
+  StreetAddress:
+    description: General purpose street and postal address information.
+    from_schema: https://cim.ucaiug.io/ns#TC57CIM.IEC61968.Common
+    attributes:
+      postalCode:
+        description: Postal code for the address.
+        slot_uri: cim:StreetAddress.postalCode
+        range: string
+        required: true
+        multivalued: false
+    class_uri: cim:StreetAddress
