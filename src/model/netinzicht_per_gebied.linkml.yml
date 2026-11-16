@@ -18,6 +18,20 @@ annotations:
   exchange_format: application/ld+json
   model_type: data-product
 enums:
+  MeasurementKind:
+    description: Types of measurement.
+    enum_uri: nl:MeasurementKind
+    permissible_values:
+      gevraagdeTransportcapaciteit:
+        meaning: nl:MeasurementKind.gevraagdeTransportcapaciteit
+      benodigdeTransportcapaciteit:
+        meaning: nl:MeasurementKind.benodigdeTransportcapaciteit
+      piekbelasting:
+        meaning: nl:MeasurementKind.piekbelasting
+      geprognotiseerdeBelasting:
+        meaning: nl:MeasurementKind.geprognotiseerdeBelasting
+      historischeBelasting:
+        meaning: nl:MeasurementKind.historischeBelasting
   UnitMultiplier:
     description: "The unit multipliers defined for the CIM.  When applied to unit\
       \ symbols, the unit symbol is treated as a derived unit. Regardless of the contents\
@@ -660,7 +674,7 @@ classes:
       Terminal:
         description: The terminals associated with this bus name marker.
         slot_uri: cim:BusNameMarker.Terminal
-        range: curie
+        range: Terminal
         required: true
         multivalued: true
       TopologicalNode:
@@ -782,3 +796,131 @@ classes:
         required: true
         multivalued: false
     class_uri: cim:StreetAddress
+  Measurement:
+    description: |-
+      A Measurement represents any measured, calculated or non-measured
+      non-calculated quantity. Any piece of equipment may contain Measurements,
+      e.g. a substation may have temperature measurements and door open
+      indications, a transformer may have oil temperature and tank pressure
+      measurements, a bay may contain a number of power flow measurements and a
+      Breaker may contain a switch status measurement.
+
+      The PSR - Measurement association is intended to capture this use of
+      Measurement and is included in the naming hierarchy based on
+      EquipmentContainer. The naming hierarchy typically has Measurements as
+      leaves, e.g. Substation-VoltageLevel-Bay-Switch-Measurement.
+
+      Some Measurements represent quantities related to a particular sensor
+      location in the network, e.g. a voltage transformer (VT) or potential
+      transformer (PT) at a busbar or a current transformer (CT) at the bar
+      between a breaker and an isolator.  The sensing position is not captured
+      in the PSR - Measurement association.  Instead it is captured by the
+      Measurement - Terminal association that is used to define the sensing
+      location in the network topology. The location is defined by the
+      connection of the Terminal to ConductingEquipment.
+
+      If both a Terminal and PSR are associated, and the PSR is of type
+      ConductingEquipment, the associated Terminal should belong to that
+      ConductingEquipment instance.
+
+      When the sensor location is needed both Measurement-PSR and
+      Measurement-Terminal are used. The Measurement-Terminal association is
+      never used alone.
+    from_schema: https://cim.ucaiug.io/ns#TC57CIM.IEC61970.Base.Meas
+    is_a: IdentifiedObject
+    attributes:
+      measurementType:
+        slot_uri: cim:Measurement.measurementType
+        range: MeasurementKind
+        required: false
+        multivalued: false
+        description: "Specifies the type of measurement.  For example, this specifies\
+          \ if the measurement represents an indoor temperature, outdoor temperature,\
+          \ bus voltage, line flow, etc.\r\nWhen the measurementType is set to \"\
+          Specialization\", the type of Measurement is defined in more detail by the\
+          \ specialized class which inherits from Measurement.\r\n\r\n"
+      unitMultiplier:
+        description: The unit multiplier of the measured quantity.
+        slot_uri: cim:Measurement.unitMultiplier
+        range: UnitMultiplier
+        required: true
+        multivalued: false
+      unitSymbol:
+        description: The unit of measure of the measured quantity.
+        slot_uri: cim:Measurement.unitSymbol
+        range: UnitSymbol
+        required: true
+        multivalued: false
+      Terminal:
+        description: One or more measurements may be associated with a terminal in
+          the network.
+        slot_uri: cim:Measurement.Terminal
+        range: Terminal
+        required: false
+        multivalued: false
+      PowerSystemResource:
+        description: The power system resource that contains the measurement.
+        slot_uri: cim:Measurement.PowerSystemResource
+        range: PowerTransformer
+        required: false
+        multivalued: false
+      SeriesEquipmentDependentLimit:
+        slot_uri: nl:Measurement.SeriesEquipmentDependentLimit
+        range: SeriesEquipmentDependentLimit
+        required: false
+        multivalued: false
+        description: Measurement which applies to all contained Equipment-s.
+    class_uri: cim:Measurement
+  Analog:
+    description: "Analog represents an analog Measurement.\r\n"
+    from_schema: https://cim.ucaiug.io/ns#TC57CIM.IEC61970.Base.Meas
+    is_a: Measurement
+    attributes:
+      positiveFlowIn:
+        description: If true then this measurement is an active power, reactive power
+          or current with the convention that a positive value measured at the Terminal
+          means power is flowing into the related PowerSystemResource.
+        slot_uri: cim:Analog.positiveFlowIn
+        range: boolean
+        required: false
+        multivalued: false
+    class_uri: cim:Analog
+  AnalogValue:
+    description: AnalogValue represents an analog MeasurementValue.
+    from_schema: https://cim.ucaiug.io/ns#TC57CIM.IEC61970.Base.Meas
+    is_a: MeasurementValue
+    attributes:
+      value:
+        description: The value to supervise.
+        slot_uri: cim:AnalogValue.value
+        range: float
+        required: false
+        multivalued: false
+      Analog:
+        description: Measurement to which this value is connected.
+        slot_uri: cim:AnalogValue.Analog
+        range: Analog
+        required: true
+        multivalued: false
+    class_uri: cim:AnalogValue
+  MeasurementValue:
+    description: "The current state for a measurement. A state value is an instance\
+      \ of a measurement from a specific source. Measurements can be associated with\
+      \ many state values, each representing a different source for the measurement.\r\
+      \n"
+    from_schema: https://cim.ucaiug.io/ns#TC57CIM.IEC61970.Base.Meas
+    is_a: IOPoint
+    attributes:
+      timeStamp:
+        description: The time when the value was last updated.
+        slot_uri: cim:MeasurementValue.timeStamp
+        range: datetime
+        required: false
+        multivalued: false
+    class_uri: cim:MeasurementValue
+  IOPoint:
+    description: The class describe a measurement or control value. The purpose is
+      to enable having attributes and associations common for measurement and control.
+    from_schema: https://cim.ucaiug.io/ns#TC57CIM.IEC61970.Base.Meas
+    is_a: IdentifiedObject
+    class_uri: cim:IOPoint

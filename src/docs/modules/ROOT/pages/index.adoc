@@ -91,6 +91,7 @@ direction: up
 
 ActivePower.class: grid
 ActivePowerLimit.class: grid
+Analog.class: grid
 BaseVoltage.class: grid
 BoundaryPoint.class: grid
 BusNameMarker.class: grid
@@ -117,6 +118,7 @@ Substation -- SubGeographicalRegion
 PowerTransformer -- BaseVoltage
 PowerTransformer -- Substation
 PowerTransformer -- VoltageLevel
+PowerTransformer -- Analog
 EnergyConsumer -- BaseVoltage
 EnergyConsumer -- Substation
 EnergyConsumer -- VoltageLevel
@@ -131,6 +133,7 @@ PowerTransformerEnd -- Terminal
 Terminal -- ConnectivityNode
 Terminal -- PowerTransformer
 Terminal -- EnergyConsumer
+Terminal -- Analog
 ConnectivityNode -- VoltageLevel
 ConnectivityNode -- BoundaryPoint
 BusNameMarker -- TopologicalNode
